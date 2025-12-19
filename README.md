@@ -48,7 +48,7 @@ pip install -r requirements.txt
 3. Sätt miljövariabler (exempel):
 
 ```bash
-export SQLALCHEMY_DATABASE_URI="mysql+pymysql://dbadm:P%40ssw0rd@Timpa.local/socialx?charset=utf8mb4"
+export SQLALCHEMY_DATABASE_URI="mysql+pymysql://dbadm:P%40ssw0rd@exempel.local/socialx?charset=utf8mb4"
 export SECRET_KEY="change-me"
 ```
 
