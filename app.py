@@ -3,10 +3,14 @@ from extensions import db, login_manager, User
 from utils.post import Post
 from flask_login import login_user, logout_user, login_required, current_user
 import random
+import os
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = "super-secret"
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://dbadm:P%40ssw0rd@Timpa.local/socialx?charset=utf8mb4"
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "super-secret")
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
+    "SQLALCHEMY_DATABASE_URI",
+    "mysql+pymysql://dbadm:P%40ssw0rd@Timpa.local/socialx?charset=utf8mb4"
+)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Init extensions
@@ -109,4 +113,4 @@ def user_posts(user_id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)

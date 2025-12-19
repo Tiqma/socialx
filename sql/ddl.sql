@@ -1,5 +1,6 @@
+USE socialx;
 
-
+DROP TABLE IF EXISTS posts;
 DROP TABLE IF EXISTS users;
 
 CREATE TABLE users (
@@ -12,9 +13,8 @@ CREATE TABLE users (
 
 CREATE TABLE posts (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    content TEXT NOT NULL,
-    author_id INT,
+    user_id INT NOT NULL,
+    text TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE SET NULL
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
