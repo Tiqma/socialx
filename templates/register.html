@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrera dig</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+{% include 'header.html' %}
+
+<main class="auth-container">
+    <h1>Registrera dig</h1>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="flash-message error">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        <label>
+            Email
+            <input type="email" name="email" required>
+        </label>
+
+        <label>
+            Lösenord
+            <input type="password" name="password" required>
+        </label>
+
+        <button type="submit">Registrera</button>
+    </form>
+
+    <p>
+        Har du redan ett konto?
+        <a href="/login">Logga in</a>
+    </p>
+</main>
+
+</body>
+</html>

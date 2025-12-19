@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <title>SocialX</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+{% include 'header.html' %}
+
+<header>
+    <h1>Welcome to SocialX</h1>
+    <p>Vad händer i dag?</p>
+</header>
+
+<main class="feed">
+    {% for post in posts %}
+        <div class="post">
+            <strong>@{{ post.user }}</strong>
+            <p>{{ post.text }}</p>
+        </div>
+    {% endfor %}
+</main>
+
+</body>
+</html>

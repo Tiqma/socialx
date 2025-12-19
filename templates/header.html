@@ -1,0 +1,11 @@
+<header class="top">
+    <div class="auth-buttons">
+        {% if current_user.is_authenticated %}
+            <span class="user-greeting">Hej {{ current_user.email }}!</span>
+            <a href="/logout" class="btn btn-danger">Logga ut</a>
+        {% else %}
+            <a href="/register" class="btn">Registrera</a>
+            <a href="/login" class="btn btn-secondary">Logga in</a>
+        {% endif %}
+    </div>
+</header>

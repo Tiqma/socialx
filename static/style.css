@@ -1,0 +1,52 @@
+@import url("regbuttons.css");
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f1f5f9;
+  margin: 0;
+}
+
+header {
+  background: #0ea5e9;
+  color: white;
+  padding: 1rem;
+}
+
+.feed {
+  max-width: 600px;
+  margin: 2rem auto;
+}
+
+.post {
+  background: white;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+}
+
+.top {
+  background: var(--header);
+  color: var(--text);
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toggle {
+  text-decoration: none;
+  font-size: 1.2rem;
+  color: var(--text);
+}
+
+.flash-message {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}
+
+.flash-message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
