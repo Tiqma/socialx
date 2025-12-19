@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ user.email }} — Inlägg</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+{% include 'header.html' %}
+
+<main class="feed">
+    <header>
+        <h2>@{{ user.email }}</h2>
+        <p>Inlägg av användaren</p>
+    </header>
+
+    {% if posts %}
+        {% for post in posts %}
+            <div class="post">
+                <strong>@{{ user.email }}</strong>
+                <p>{{ post.text }}</p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Inga inlägg hittades för den här användaren.</p>
+    {% endif %}
+
+</main>
+
+</body>
+</html>

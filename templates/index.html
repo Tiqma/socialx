@@ -15,9 +15,23 @@
 </header>
 
 <main class="feed">
+    {% if current_user.is_authenticated %}
+        <section class="create-post">
+            <form method="POST" action="/post">
+                <label>
+                    <textarea name="text" rows="3" placeholder="Skriv något..." required></textarea>
+                </label>
+                <button type="submit">Publicera</button>
+            </form>
+        </section>
+    {% endif %}
     {% for post in posts %}
         <div class="post">
-            <strong>@{{ post.user }}</strong>
+            {% if post.user is string %}
+                <strong>@{{ post.user }}</strong>
+            {% else %}
+                <strong><a href="/user/{{ post.user.id }}">@{{ post.user.email }}</a></strong>
+            {% endif %}
             <p>{{ post.text }}</p>
         </div>
     {% endfor %}
