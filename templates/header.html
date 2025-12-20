@@ -1,4 +1,12 @@
 <header class="top">
+    <nav class="feed-nav">
+        {% if current_user.is_authenticated %}
+            <a href="/" class="nav-link {% if feed_type == 'explore' %}active{% endif %}">Utforska</a>
+            <a href="/feed" class="nav-link {% if feed_type == 'following' %}active{% endif %}">Min feed</a>
+        {% else %}
+            <a href="/" class="nav-link {% if feed_type == 'explore' %}active{% endif %}">Utforska</a>
+        {% endif %}
+    </nav>
     <div class="auth-buttons">
         {% if current_user.is_authenticated %}
             <span class="user-greeting">Hej {{ current_user.email }}!</span>

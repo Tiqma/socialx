@@ -10,8 +10,13 @@
 {% include 'header.html' %}
 
 <header>
-    <h1>Welcome to SocialX</h1>
-    <p>Vad händer i dag?</p>
+    {% if feed_type == 'following' %}
+        <h1>Din feed</h1>
+        <p>Inlägg från dem du följer</p>
+    {% else %}
+        <h1>Utforska</h1>
+        <p>Vad händer i dag?</p>
+    {% endif %}
 </header>
 
 <main class="feed">
@@ -35,6 +40,10 @@
             <p>{{ post.text }}</p>
         </div>
     {% endfor %}
+
+    {% if not posts %}
+        <p>Inga inlägg än. Börja följa användare för att se deras inlägg!</p>
+    {% endif %}
 </main>
 
 </body>

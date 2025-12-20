@@ -35,6 +35,42 @@ class User(UserMixin, db.Model):
 
     def __repr__(self) -> str:
         return f"<User {self.email}>"
+    
+    def is_following(self, user: "User") -> bool:
+        """Check if this user follows another user."""
+        return Follow.query.filter_by(follower_id=self.id, followed_id=user.id).first() is not None
+    
+    def follow(self, user: "User") -> None:
+        """Follow another user."""
+        if self.id == user.id:
+            return  # Cannot follow self
+        if not self.is_following(user):
+            association = Follow(follower_id=self.id, followed_id=user.id)
+            db.session.add(association)
+            db.session.commit()
+    
+    def unfollow(self, user: "User") -> None:
+        """Unfollow another user."""
+        if self.id == user.id:
+            return  # Cannot unfollow self
+        Follow.query.filter_by(follower_id=self.id, followed_id=user.id).delete()
+        db.session.commit()
+    
+    def followers_count(self) -> int:
+        """Get count of followers."""
+        return Follow.query.filter_by(followed_id=self.id).count()
+    
+    def following_count(self) -> int:
+        """Get count of users this user follows."""
+        return Follow.query.filter_by(follower_id=self.id).count()
+
+
+class Follow(db.Model):
+    __tablename__ = "follows"
+
+    follower_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True, nullable=False)
+    followed_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
 
 @login_manager.user_loader

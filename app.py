@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, flash, abort
+from flask import Flask, render_template, request, redirect, flash, abort, jsonify
 from extensions import db, login_manager, User
 from utils.post import Post
 from flask_login import login_user, logout_user, login_required, current_user
@@ -9,7 +9,7 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "super-secret")
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
     "SQLALCHEMY_DATABASE_URI",
-    "mysql+pymysql://dbadm:P%40ssw0rd@localhost/socialx?charset=utf8mb4"
+    "mysql+pymysql://dbadm:P%40ssw0rd@Timpa.local/socialx?charset=utf8mb4"
 )
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -25,7 +25,7 @@ with app.app_context():
 
 @app.route("/")
 def index():
-    # show recent posts from DB (latest 10)
+    # show recent posts from DB (latest 10) - explore feed
     recent_posts = Post.query.order_by(Post.created_at.desc()).limit(10).all()
     if not recent_posts:
         # fallback to sample content
@@ -34,7 +34,25 @@ def index():
             {"user": "erik", "text": "Kodade hela natten... ☕"},
             {"user": "lisa", "text": "Någon som sett senaste serien?"}
         ]
-    return render_template("index.html", posts=recent_posts)
+    feed_type = "explore"
+    return render_template("index.html", posts=recent_posts, feed_type=feed_type)
+
+
+@app.route("/feed")
+@login_required
+def feed():
+    # show posts from users current_user follows
+    from extensions import Follow
+    followed_ids = db.session.query(Follow.followed_id).filter_by(follower_id=current_user.id).all()
+    followed_ids = [row[0] for row in followed_ids]
+    
+    if followed_ids:
+        feed_posts = Post.query.filter(Post.user_id.in_(followed_ids)).order_by(Post.created_at.desc()).limit(10).all()
+    else:
+        feed_posts = []
+    
+    feed_type = "following"
+    return render_template("index.html", posts=feed_posts, feed_type=feed_type)
 
 
 @app.route('/post', methods=['POST'])
@@ -109,8 +127,38 @@ def user_posts(user_id):
         abort(404)
 
     posts = Post.query.filter_by(user_id=user_id).order_by(Post.created_at.desc()).all()
-    return render_template('user.html', user=user, posts=posts)
+    is_following = False
+    if current_user.is_authenticated and current_user.id != user_id:
+        is_following = current_user.is_following(user)
+    
+    return render_template('user.html', user=user, posts=posts, 
+                           is_following=is_following,
+                           followers_count=user.followers_count(),
+                           following_count=user.following_count())
 
+
+@app.route('/user/<int:user_id>/follow', methods=['POST'])
+@login_required
+def follow_user_route(user_id):
+    if current_user.id == user_id:
+        return jsonify({'error': 'Cannot follow yourself'}), 400
+    user = User.query.get(user_id)
+    if not user:
+        abort(404)
+    current_user.follow(user)
+    return jsonify({'status': 'ok', 'followers_count': user.followers_count()})
+
+
+@app.route('/user/<int:user_id>/unfollow', methods=['POST'])
+@login_required
+def unfollow_user_route(user_id):
+    if current_user.id == user_id:
+        return jsonify({'error': 'Cannot unfollow yourself'}), 400
+    user = User.query.get(user_id)
+    if not user:
+        abort(404)
+    current_user.unfollow(user)
+    return jsonify({'status': 'ok', 'followers_count': user.followers_count()})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

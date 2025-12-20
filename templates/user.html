@@ -13,6 +13,16 @@
     <header>
         <h2>@{{ user.email }}</h2>
         <p>Inlägg av användaren</p>
+        
+        <div class="user-stats">
+            <span>{{ followers_count }} följare</span> · 
+            <span>följer {{ following_count }}</span>
+            {% if current_user.is_authenticated and current_user.id != user.id %}
+                <button id="follow-btn" class="follow-btn" data-user-id="{{ user.id }}" data-following="{{ 'true' if is_following else 'false' }}">
+                    {{ "Följar" if is_following else "Följ" }}
+                </button>
+            {% endif %}
+        </div>
     </header>
 
     {% if posts %}
@@ -25,8 +35,36 @@
     {% else %}
         <p>Inga inlägg hittades för den här användaren.</p>
     {% endif %}
-
 </main>
 
-</body>
-</html>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const btn = document.getElementById('follow-btn');
+    if (!btn) return;
+    
+    btn.addEventListener('click', async function() {
+        const userId = btn.dataset.userId;
+        let isFollowing = btn.dataset.following === 'true';
+        const url = `/user/${userId}/${isFollowing ? 'unfollow' : 'follow'}`;
+        
+        btn.disabled = true;
+        try {
+            const response = await fetch(url, { method: 'POST' });
+            const data = await response.json();
+            if (response.ok) {
+                isFollowing = !isFollowing;
+                btn.dataset.following = isFollowing;
+                btn.textContent = isFollowing ? 'Följar' : 'Följ';
+                document.querySelector('.user-stats span:first-child').textContent = data.followers_count + ' följare';
+            } else {
+                alert(data.error || 'Ett fel uppstod');
+            }
+        } catch (e) {
+            alert('Nätverksfel: ' + e.message);
+        } finally {
+            btn.disabled = false;
+        }
+    });
+});
+</script>
+
